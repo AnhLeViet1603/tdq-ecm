@@ -1,0 +1,24 @@
+<!-- ════════════════════════════════════════════════════════════
+     ORDERS PAGE — pages/orders.html
+     Lịch sử đơn hàng dạng bảng với status badge và action
+════════════════════════════════════════════════════════════ -->
+<div id="page-orders" class="page">
+  <div class="table-card">
+    <table class="data-table" aria-label="Danh sách đơn hàng">
+      <thead>
+        <tr>
+          <th>Mã đơn hàng</th>
+          <th>Trạng thái</th>
+          <th>Số sản phẩm</th>
+          <th>Tổng tiền</th>
+          <th>Ngày đặt</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody id="orders-body">
+        <!-- Rows loaded dynamically by app.js (loadOrders) -->
+        <tr><td colspan="6" class="loading-cell">Đang tải…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

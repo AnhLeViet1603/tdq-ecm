@@ -1,0 +1,37 @@
+<!-- ════════════════════════════════════════════════════════════
+     PRODUCTS PAGE — pages/products.html
+     Danh sách sản phẩm: search, filter danh mục, grid, pagination
+════════════════════════════════════════════════════════════ -->
+<div id="page-products" class="page">
+
+  <!-- ── Toolbar: search + category filter ─────────────────── -->
+  <div class="page-toolbar">
+    <div class="search-box">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input
+        type="search"
+        placeholder="Tìm sản phẩm…"
+        id="product-search"
+        aria-label="Tìm kiếm sản phẩm"
+      />
+    </div>
+    <select id="category-filter" class="select" aria-label="Lọc theo danh mục">
+      <option value="">Tất cả danh mục</option>
+      <!-- Options loaded dynamically by app.js (loadCategories) -->
+    </select>
+  </div>
+
+  <!-- ── Product Grid ────────────────────────────────────────── -->
+  <div class="product-grid" id="products-grid">
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+  </div>
+
+  <!-- ── Pagination ─────────────────────────────────────────── -->
+  <div class="pagination" id="products-pagination"></div>
+
+</div>

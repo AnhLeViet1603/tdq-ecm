@@ -1,0 +1,66 @@
+<!-- ════════════════════════════════════════════════════════════
+     SIDEBAR — partials/sidebar.html
+     Navigation drawer chính của ứng dụng
+════════════════════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <span class="logo-text">SHOPPE.VN</span>
+    </div>
+  </div>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a href="#" class="nav-item active" data-page="home" id="nav-home">
+      <span class="nav-icon" aria-hidden="true">🏠</span>
+      <span class="nav-label">Tổng quan</span>
+    </a>
+    <a href="#" class="nav-item" data-page="products" id="nav-products">
+      <span class="nav-icon" aria-hidden="true">🛍️</span>
+      <span class="nav-label">Sản phẩm</span>
+    </a>
+    <a href="#" class="nav-item" data-page="cart" id="nav-cart">
+      <span class="nav-icon" aria-hidden="true">🛒</span>
+      <span class="nav-label">Giỏ hàng</span>
+      <span class="badge" id="cart-badge"></span>
+    </a>
+    <a href="#" class="nav-item" data-page="orders" id="nav-orders">
+      <span class="nav-icon" aria-hidden="true">📦</span>
+      <span class="nav-label">Đơn hàng</span>
+    </a>
+    <a href="#" class="nav-item" data-page="promotions" id="nav-promotions">
+      <span class="nav-icon" aria-hidden="true">🏷️</span>
+      <span class="nav-label">Khuyến mãi</span>
+    </a>
+  </nav>
+
+  <!-- ── Quản trị (Admin/Staff only) ────────────────────────── -->
+  <div id="nav-group-admin" class="hidden" style="margin-top: 1rem; border-top: 1px solid var(--border-2); padding-top: 1rem;">
+    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 1.5rem 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+      <span>Quản trị</span>
+      <span class="badge" style="background: var(--primary-h);">Admin</span>
+    </div>
+    <nav class="nav" role="navigation" aria-label="Admin navigation">
+      <a href="#" class="nav-item" data-page="manage-categories" id="nav-manage-categories">
+        <span class="nav-icon" aria-hidden="true">📁</span>
+        <span class="nav-label">Quản lý Danh mục</span>
+      </a>
+      <a href="#" class="nav-item" data-page="manage-products" id="nav-manage-products">
+        <span class="nav-icon" aria-hidden="true">📦</span>
+        <span class="nav-label">Quản lý Sản phẩm</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="sidebar-footer">
+    <a href="#" class="nav-item" data-page="profile" id="nav-profile">
+      <div class="avatar-sm" id="user-avatar-sm">A</div>
+      <span class="nav-label" id="user-name-sm">Loading…</span>
+    </a>
+    <button class="btn-logout" id="logout-btn" title="Đăng xuất" aria-label="Đăng xuất">
+      ⏻
+    </button>
+  </div>
+
+</aside>

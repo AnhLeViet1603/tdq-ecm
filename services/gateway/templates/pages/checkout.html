@@ -1,0 +1,90 @@
+<!-- ════════════════════════════════════════════════════════════
+     CHECKOUT PAGE — pages/checkout.html
+     Điền thông tin và thanh toán
+════════════════════════════════════════════════════════════ -->
+<div id="page-checkout" class="page">
+  <button class="btn-ghost" style="margin-bottom: 1.5rem" onclick="navigateTo('cart')">← Quay lại giỏ hàng</button>
+
+  <h2 style="margin-bottom: 1.5rem">🛒 Hoàn tất thanh toán</h2>
+
+  <div class="cart-layout">
+    
+    <!-- Left form -->
+    <div class="checkout-form-container">
+      <form id="checkout-form">
+        
+        <!-- Address Section -->
+        <div class="glass-card" style="margin-bottom: 1.5rem">
+          <h3 class="card-title" style="margin-bottom: 1rem">1. Thông tin Nhận hàng</h3>
+          <div class="field" style="margin-bottom: 1rem">
+            <label for="ch-name">Họ và tên người nhận</label>
+            <input type="text" id="ch-name" required placeholder="Ví dụ: Nguyễn Văn A" />
+          </div>
+          <div class="field" style="margin-bottom: 1rem">
+            <label for="ch-phone">Số điện thoại</label>
+            <input type="text" id="ch-phone" required placeholder="0912345678" />
+          </div>
+          <div class="field">
+            <label for="ch-address">Địa chỉ chi tiết</label>
+            <textarea id="ch-address" required rows="3" placeholder="Số nhà, Tên đường, Quận, Thành phố..."></textarea>
+          </div>
+        </div>
+
+        <!-- Payment Section -->
+        <div class="glass-card">
+          <h3 class="card-title" style="margin-bottom: 1rem">2. Phương thức Thanh toán</h3>
+          
+          <label style="display:flex; align-items:center; gap: 1rem; padding: 1rem; border: 1px solid var(--border-1); border-radius: 8px; margin-bottom: 0.75rem; cursor:pointer">
+            <input type="radio" name="ch-payment" value="cod" checked style="width: 1.2rem; height: 1.2rem" />
+            <div>
+              <div style="font-weight: 600">Thanh toán khi nhận hàng (COD)</div>
+              <div style="font-size: 0.8rem; color: var(--text-2)">Thanh toán bằng tiền mặt khi shipper giao hàng tới.</div>
+            </div>
+          </label>
+
+          <label style="display:flex; align-items:center; gap: 1rem; padding: 1rem; border: 1px solid var(--border-1); border-radius: 8px; cursor:pointer">
+            <input type="radio" name="ch-payment" value="vnpay" style="width: 1.2rem; height: 1.2rem" />
+            <div>
+              <div style="font-weight: 600">Ví điện tử VNPay</div>
+              <div style="font-size: 0.8rem; color: var(--text-2)">Quét mã QR qua ứng dụng ngân hàng. (Giả lập)</div>
+            </div>
+          </label>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Right Summary -->
+    <div class="checkout-summary-container">
+      <div class="summary-card">
+        <h3 style="margin-bottom: 1rem">Đơn hàng của bạn</h3>
+        <div id="checkout-items-list" style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem; padding-right: 0.5rem;">
+           <!-- items injected here -->
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-row">
+          <span>Tạm tính</span>
+          <span id="checkout-subtotal">0₫</span>
+        </div>
+        <div class="summary-row">
+          <span>Phí vận chuyển</span>
+          <span class="text-success">Miễn phí</span>
+        </div>
+        
+        <div class="summary-divider"></div>
+
+        <div class="summary-row total" style="margin-bottom: 1.5rem">
+          <span>Tổng cộng</span>
+          <span id="checkout-total" style="color: var(--primary-h)">0₫</span>
+        </div>
+
+        <button type="submit" form="checkout-form" class="btn-primary btn-full" id="btn-submit-order" style="padding: 1rem; font-size: 1.05rem;">
+          💳 Đặt hàng ngay
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

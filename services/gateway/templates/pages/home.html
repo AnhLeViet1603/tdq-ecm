@@ -1,0 +1,72 @@
+<!-- ════════════════════════════════════════════════════════════
+     HOME PAGE — pages/home.html
+     Dashboard: thống kê, sản phẩm nổi bật, đơn hàng gần đây
+════════════════════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- ── Stat Cards ──────────────────────────────────────────── -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6)">🛍️</div>
+      <div class="stat-info">
+        <span class="stat-value" id="stat-products">—</span>
+        <span class="stat-label">Sản phẩm</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #0ea5e9, #3b82f6)">📦</div>
+      <div class="stat-info">
+        <span class="stat-value" id="stat-orders">—</span>
+        <span class="stat-label">Đơn hàng</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444)">🛒</div>
+      <div class="stat-info">
+        <span class="stat-value" id="stat-cart-count">—</span>
+        <span class="stat-label">Sản phẩm trong giỏ</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669)">🏷️</div>
+      <div class="stat-info">
+        <span class="stat-value" id="stat-coupons">—</span>
+        <span class="stat-label">Khuyến mãi</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Featured Products ───────────────────────────────────── -->
+  <div class="section-header">
+    <h3>Sản phẩm nổi bật</h3>
+    <a href="#" class="link" data-page="products">Xem tất cả →</a>
+  </div>
+  <div class="product-grid" id="featured-products">
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+  </div>
+
+  <!-- ── Recent Orders ───────────────────────────────────────── -->
+  <div class="section-header" style="margin-top: 2rem">
+    <h3>Đơn hàng gần đây</h3>
+    <a href="#" class="link" data-page="orders">Xem tất cả →</a>
+  </div>
+  <div class="table-card">
+    <table class="data-table" aria-label="Đơn hàng gần đây">
+      <thead>
+        <tr>
+          <th>Mã đơn</th>
+          <th>Trạng thái</th>
+          <th>Tổng tiền</th>
+          <th>Ngày đặt</th>
+        </tr>
+      </thead>
+      <tbody id="recent-orders-body">
+        <tr><td colspan="4" class="loading-cell">Đang tải…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

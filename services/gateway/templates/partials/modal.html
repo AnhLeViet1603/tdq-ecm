@@ -1,0 +1,18 @@
+<!-- ════════════════════════════════════════════════════════════
+     PRODUCT DETAIL MODAL — partials/modal.html
+     Dialog xem chi tiết sản phẩm và thêm vào giỏ hàng
+════════════════════════════════════════════════════════════ -->
+<div
+  id="product-modal"
+  class="modal hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modal-title"
+>
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+  <div class="modal-content">
+    <button class="modal-close" id="modal-close" aria-label="Đóng modal">✕</button>
+    <!-- Content is injected dynamically by app.js (openProductModal) -->
+    <div id="modal-body"></div>
+  </div>
+</div>

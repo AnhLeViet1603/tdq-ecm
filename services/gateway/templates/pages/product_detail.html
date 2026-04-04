@@ -1,0 +1,85 @@
+<!-- ════════════════════════════════════════════════════════════
+     PRODUCT DETAIL PAGE — pages/product_detail.html
+     Trang chi tiết sản phẩm + Đánh giá (Reviews)
+════════════════════════════════════════════════════════════ -->
+<div id="page-product-detail" class="page">
+  <button class="btn-ghost" style="margin-bottom: 1rem" onclick="navigateTo('products')">← Quay lại cửa hàng</button>
+  
+  <div class="product-detail-layout" style="display: grid; grid-template-columns: 400px 1fr; gap: 2rem; align-items: start; max-width: 1000px; margin: 0 auto;">
+    
+    <!-- Cột trái: Ảnh SP -->
+    <div class="product-detail-image" id="pd-image-container" style="background: var(--bg-1); border: 1px solid var(--border-1); border-radius: 12px; overflow: hidden; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 5rem;">
+      <!-- Ảnh sẽ được load ở đây -->
+      🛍️
+    </div>
+
+    <!-- Cột phải: Thông tin SP -->
+    <div class="product-detail-info">
+      <h1 id="pd-name" style="margin-bottom: 0.5rem; font-size: 1.5rem; line-height: 1.3">Tên sản phẩm...</h1>
+      <div style="color: var(--text-2); font-size: 0.875rem; margin-bottom: 1rem;">
+        SKU: <span id="pd-sku">...</span> <span id="pd-category-wrap" style="display:none">| Danh mục: <span id="pd-category"></span></span>
+      </div>
+      
+      <div id="pd-price-wrap" style="margin-bottom: 1.5rem;">
+        <span id="pd-compare-price" style="text-decoration: line-through; color: var(--text-3); font-size: 1rem; margin-right: 0.5rem; display:none"></span>
+        <span id="pd-price" style="font-size: 1.75rem; font-weight: 700; color: var(--primary-h);">0₫</span>
+      </div>
+
+      <div id="pd-attributes" style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <!-- Thuộc tính sẽ render ở đây -->
+      </div>
+      
+      <p id="pd-desc" style="color: var(--text-2); line-height: 1.6; margin-bottom: 2rem; white-space: pre-wrap;">
+        Mô tả sản phẩm...
+      </p>
+
+      <div class="action-row" style="display: flex; gap: 1rem; align-items: center;">
+        <div class="qty-control" style="border: 1px solid var(--border-2); border-radius: 0.5rem; padding: 0.25rem;">
+          <button class="qty-btn" id="pd-qty-minus">−</button>
+          <span class="qty-value" id="pd-qty" style="width: 2rem; text-align: center">1</span>
+          <button class="qty-btn" id="pd-qty-plus">+</button>
+        </div>
+        <button class="btn-primary" id="pd-add-cart" style="flex: 1; max-width: 250px">🛒 Thêm vào giỏ hàng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phân cách -->
+  <hr style="border: none; border-top: 1px solid var(--border-1); margin: 3rem 0;">
+
+  <!-- Review Section -->
+  <div class="product-reviews" style="max-width: 800px; margin: 0 auto">
+    <h2 style="margin-bottom: 1.5rem">Đánh giá sản phẩm</h2>
+    <div id="pd-review-summary" style="margin-bottom: 2rem;">
+      <div style="font-size: 2.5rem; font-weight: bold; color: #ff9f43; line-height: 1;"><span id="pd-avg-rating">0</span><span style="font-size: 1.5rem">/5</span></div>
+      <div style="color: var(--text-2); font-size: 0.9rem" id="pd-total-reviews">Chưa có đánh giá nào</div>
+    </div>
+
+    <!-- Nút Viết Đánh giá (Chỉ User login mới thấy) -->
+    <div id="pd-write-review-container" style="background: var(--bg-1); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; display: none;">
+      <h3 style="margin-bottom: 1rem; font-size: 1.1rem">Viết đánh giá của bạn</h3>
+      <form id="pd-review-form">
+        <label style="display:block; margin-bottom:0.5rem; font-size:0.9rem">Chất lượng sản phẩm</label>
+        <div style="margin-bottom: 1rem; color: #ff9f43; font-size: 1.5rem; display:flex; gap:0.25rem; user-select:none" id="pd-star-select">
+          <span data-val="1" style="cursor:pointer">★</span>
+          <span data-val="2" style="cursor:pointer">★</span>
+          <span data-val="3" style="cursor:pointer">★</span>
+          <span data-val="4" style="cursor:pointer">☆</span>
+          <span data-val="5" style="cursor:pointer">☆</span>
+        </div>
+        <input type="hidden" id="pd-rating-input" value="3" />
+        
+        <label for="pd-review-text" style="display:block; margin-bottom:0.5rem; font-size:0.9rem">Nội dung đánh giá <span class="text-danger">*</span></label>
+        <textarea id="pd-review-text" rows="3" required style="width: 100%; border: 1px solid var(--border-2); border-radius: 8px; padding: 0.75rem; background: var(--bg-3); color: var(--text-1); margin-bottom: 1rem;" placeholder="Khách hàng tuyệt vời, sản phẩm cũng thế..."></textarea>
+        
+        <button type="submit" class="btn-primary" id="pd-submit-review">Gửi đánh giá</button>
+      </form>
+    </div>
+
+    <!-- Danh sách Reviews -->
+    <div id="pd-reviews-list" style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div class="loading-cell">Đang tải đánh giá...</div>
+    </div>
+  </div>
+  
+</div>

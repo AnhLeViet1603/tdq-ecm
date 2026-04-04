@@ -1,0 +1,25 @@
+<!-- ════════════════════════════════════════════════════════════
+     PROMOTIONS PAGE — pages/promotions.html
+     Kiểm tra mã giảm giá / voucher
+════════════════════════════════════════════════════════════ -->
+<div id="page-promotions" class="page">
+  <div class="coupon-validator">
+    <div class="glass-card">
+      <h3 class="card-title">🏷️ Kiểm tra mã giảm giá</h3>
+
+      <div class="coupon-check-row">
+        <input
+          type="text"
+          id="check-coupon-input"
+          placeholder="Nhập mã khuyến mãi…"
+          class="input-lg"
+          aria-label="Mã khuyến mãi"
+        />
+        <button class="btn-primary" id="check-coupon-btn">Kiểm tra</button>
+      </div>
+
+      <!-- Result injected by app.js -->
+      <div id="coupon-result"></div>
+    </div>
+  </div>
+</div>

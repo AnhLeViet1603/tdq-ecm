@@ -1,0 +1,282 @@
+version: "3.9"
+
+# ==============================================================
+# E-Commerce Microservices Platform
+# Services: gateway(8000) auth(8001) product(8002) inventory(8003)
+#           cart(8004) order(8005) payment(8006) promotion(8007)
+#           review(8008) shipping(8009)
+# Database: 1 PostgreSQL instance, 9 separate databases
+# ==============================================================
+
+networks:
+  ecommerce_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+services:
+
+  # ── PostgreSQL (single instance, 9 databases) ──────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecommerce_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: postgres
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecommerce_network
+
+  # ── Gateway (8000) ─────────────────────────────────────────
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile
+    container_name: ecommerce_gateway
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: gateway
+      SERVICE_PORT: "8000"
+    ports:
+      - "${GATEWAY_PORT:-8000}:8000"
+    depends_on:
+      - auth
+      - product
+      - inventory
+      - cart
+      - order
+      - payment
+      - promotion
+      - review
+      - shipping
+    networks:
+      - ecommerce_network
+
+  # ── Auth (8001) ────────────────────────────────────────────
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+    container_name: ecommerce_auth
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: auth
+      SERVICE_PORT: "8001"
+      DB_NAME: ${AUTH_DB_NAME:-db_auth}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${AUTH_PORT:-8001}:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # ── Product (8002) ─────────────────────────────────────────
+  product:
+    build:
+      context: .
+      dockerfile: services/product/Dockerfile
+    container_name: ecommerce_product
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: product
+      SERVICE_PORT: "8002"
+      DB_NAME: ${PRODUCT_DB_NAME:-db_product}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${PRODUCT_PORT:-8002}:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # ── Inventory (8003) ───────────────────────────────────────
+  inventory:
+    build:
+      context: .
+      dockerfile: services/inventory/Dockerfile
+    container_name: ecommerce_inventory
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: inventory
+      SERVICE_PORT: "8003"
+      DB_NAME: ${INVENTORY_DB_NAME:-db_inventory}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${INVENTORY_PORT:-8003}:8003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # ── Cart (8004) ────────────────────────────────────────────
+  cart:
+    build:
+      context: .
+      dockerfile: services/cart/Dockerfile
+    container_name: ecommerce_cart
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: cart
+      SERVICE_PORT: "8004"
+      DB_NAME: ${CART_DB_NAME:-db_cart}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${CART_PORT:-8004}:8004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # ── Order (8005) ───────────────────────────────────────────
+  order:
+    build:
+      context: .
+      dockerfile: services/order/Dockerfile
+    container_name: ecommerce_order
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: order
+      SERVICE_PORT: "8005"
+      DB_NAME: ${ORDER_DB_NAME:-db_order}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${ORDER_PORT:-8005}:8005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # ── Payment (8006) ─────────────────────────────────────────
+  payment:
+    build:
+      context: .
+      dockerfile: services/payment/Dockerfile
+    container_name: ecommerce_payment
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: payment
+      SERVICE_PORT: "8006"
+      DB_NAME: ${PAYMENT_DB_NAME:-db_payment}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${PAYMENT_PORT:-8006}:8006"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # ── Promotion (8007) ───────────────────────────────────────
+  promotion:
+    build:
+      context: .
+      dockerfile: services/promotion/Dockerfile
+    container_name: ecommerce_promotion
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: promotion
+      SERVICE_PORT: "8007"
+      DB_NAME: ${PROMOTION_DB_NAME:-db_promotion}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${PROMOTION_PORT:-8007}:8007"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # ── Review (8008) ──────────────────────────────────────────
+  review:
+    build:
+      context: .
+      dockerfile: services/review/Dockerfile
+    container_name: ecommerce_review
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: review
+      SERVICE_PORT: "8008"
+      DB_NAME: ${REVIEW_DB_NAME:-db_review}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${REVIEW_PORT:-8008}:8008"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # ── Shipping (8009) ────────────────────────────────────────
+  shipping:
+    build:
+      context: .
+      dockerfile: services/shipping/Dockerfile
+    container_name: ecommerce_shipping
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: shipping
+      SERVICE_PORT: "8009"
+      DB_NAME: ${SHIPPING_DB_NAME:-db_shipping}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${SHIPPING_PORT:-8009}:8009"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce_network

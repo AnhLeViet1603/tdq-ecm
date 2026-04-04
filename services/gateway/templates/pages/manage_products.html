@@ -1,0 +1,117 @@
+<!-- ════════════════════════════════════════════════════════════
+     MANAGE PRODUCTS PAGE — pages/manage_products.html
+     Cho phép Admin/Staff xem, thêm, sửa, tắt bật, xóa sản phẩm
+════════════════════════════════════════════════════════════ -->
+<div id="page-manage-products" class="page">
+  <div class="page-toolbar">
+    <div class="search-box">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input
+        type="search"
+        placeholder="Tìm sản phẩm theo tên, SKU…"
+        id="manage-product-search"
+        aria-label="Tìm kiếm sản phẩm"
+      />
+    </div>
+    <select id="manage-product-category" class="select" aria-label="Lọc danh mục">
+      <option value="">Tất cả danh mục</option>
+    </select>
+    <button class="btn-primary" id="btn-create-product">+ Tạo sản phẩm</button>
+  </div>
+
+  <div class="table-card" style="overflow-x: auto;">
+    <table class="data-table" aria-label="Danh sách sản phẩm">
+      <thead>
+        <tr>
+          <th>Hình ảnh</th>
+          <th>Tên sản phẩm</th>
+          <th>SKU</th>
+          <th>Danh mục</th>
+          <th>Giá bán</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody id="manage-products-body">
+        <tr><td colspan="7" class="loading-cell">Đang tải…</td></tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="pagination" id="manage-products-pagination"></div>
+</div>
+
+<!-- Modal Thêm/Sửa Product -->
+<div id="product-crud-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="product-crud-modal-title">
+  <div class="modal-backdrop" id="product-crud-modal-backdrop"></div>
+  <div class="modal-content" style="max-width: 700px">
+    <button class="modal-close" id="product-crud-modal-close" aria-label="Đóng">✕</button>
+    <div id="product-crud-modal-body">
+      <h2 class="modal-title" id="product-crud-modal-title" style="margin-bottom: 1.5rem">Thêm sản phẩm</h2>
+      <form id="product-form">
+        <input type="hidden" id="prod-id" />
+        
+        <div class="field-row">
+          <div class="field" style="flex:2">
+            <label for="prod-name">Tên sản phẩm <span class="text-danger">*</span></label>
+            <input type="text" id="prod-name" required />
+          </div>
+          <div class="field" style="flex:1">
+            <label for="prod-sku">SKU <span class="text-danger">*</span></label>
+            <input type="text" id="prod-sku" required />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="prod-slug">Slug <span class="text-danger">*</span></label>
+            <input type="text" id="prod-slug" required />
+          </div>
+          <div class="field">
+            <label for="prod-category">Danh mục</label>
+            <select id="prod-category" class="select">
+              <option value="">-- Không có --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="prod-price">Giá bán <span class="text-danger">*</span></label>
+            <input type="number" id="prod-price" min="0" step="1000" required />
+          </div>
+          <div class="field">
+            <label for="prod-compare-price">Giá gốc (để gạch ngang)</label>
+            <input type="number" id="prod-compare-price" min="0" step="1000" />
+          </div>
+        </div>
+        
+        <div class="field">
+          <label for="prod-images">URLs Hình ảnh (Mỗi URL một dòng)</label>
+          <textarea id="prod-images" rows="3" class="input-lg" style="width:100%; border:1px solid var(--border-1); border-radius:0.5rem; background:var(--bg-1); color:var(--text-1); padding:0.75rem"></textarea>
+        </div>
+        
+        <div class="field">
+          <label for="prod-desc">Mô tả chi tiết</label>
+          <textarea id="prod-desc" rows="4" class="input-lg" style="width:100%; border:1px solid var(--border-1); border-radius:0.5rem; background:var(--bg-1); color:var(--text-1); padding:0.75rem"></textarea>
+        </div>
+        
+        <div class="field-row">
+          <div class="field" style="flex:1">
+            <label for="prod-tags">Tags (phân cách bằng dấu phẩy)</label>
+            <input type="text" id="prod-tags" placeholder="Ví dụ: hot, sale, new" />
+          </div>
+          <div class="field" style="display:flex; align-items:center; gap:0.5rem; justify-content:flex-end; padding-top:2rem">
+            <input type="checkbox" id="prod-active" checked style="width:auto" />
+            <label for="prod-active" style="margin:0; font-weight:600">Đang bật (Active)</label>
+          </div>
+        </div>
+        
+        <div class="modal-actions" style="margin-top:2rem">
+          <button type="submit" class="btn-primary" style="flex:1">Lưu sản phẩm</button>
+          <button type="button" class="btn-outline" id="product-crud-modal-cancel">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

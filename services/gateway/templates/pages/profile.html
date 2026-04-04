@@ -1,0 +1,57 @@
+<!-- ════════════════════════════════════════════════════════════
+     PROFILE PAGE — pages/profile.html
+     Hồ sơ cá nhân: thông tin, đổi mật khẩu
+════════════════════════════════════════════════════════════ -->
+<div id="page-profile" class="page">
+  <div class="profile-layout">
+
+    <!-- ── User Card ────────────────────────────────────────── -->
+    <div class="glass-card profile-card">
+      <div class="profile-header">
+        <div class="avatar-lg" id="profile-avatar">A</div>
+        <div>
+          <h2 id="profile-name">Loading…</h2>
+          <p id="profile-email" class="text-secondary">Loading…</p>
+          <div class="role-badges" id="profile-roles">
+            <!-- Role badges injected by app.js (updateUserUI) -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Edit Personal Info ────────────────────────────────── -->
+    <div class="glass-card">
+      <h3 class="card-title">Thông tin cá nhân</h3>
+      <form id="profile-form">
+        <div class="field-row">
+          <div class="field">
+            <label for="prof-name">Họ và tên</label>
+            <input type="text" id="prof-name" placeholder="Tên của bạn" />
+          </div>
+          <div class="field">
+            <label for="prof-phone">Số điện thoại</label>
+            <input type="text" id="prof-phone" placeholder="0912345678" />
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Lưu thay đổi</button>
+      </form>
+    </div>
+
+    <!-- ── Change Password ───────────────────────────────────── -->
+    <div class="glass-card">
+      <h3 class="card-title">Đổi mật khẩu</h3>
+      <form id="password-form">
+        <div class="field">
+          <label for="old-password">Mật khẩu hiện tại</label>
+          <input type="password" id="old-password" placeholder="••••••••" />
+        </div>
+        <div class="field">
+          <label for="new-password">Mật khẩu mới</label>
+          <input type="password" id="new-password" placeholder="Tối thiểu 8 ký tự" />
+        </div>
+        <button type="submit" class="btn-primary">Đổi mật khẩu</button>
+      </form>
+    </div>
+
+  </div>
+</div>

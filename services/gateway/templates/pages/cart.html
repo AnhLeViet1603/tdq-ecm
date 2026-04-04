@@ -1,0 +1,53 @@
+<!-- ════════════════════════════════════════════════════════════
+     CART PAGE — pages/cart.html
+     Giỏ hàng: danh sách items + order summary + coupon
+════════════════════════════════════════════════════════════ -->
+<div id="page-cart" class="page">
+  <div class="cart-layout" id="cart-layout">
+
+    <!-- ── Cart Items (left column) ──────────────────────────── -->
+    <div class="cart-items" id="cart-items-list">
+      <!-- Default empty state (replaced by app.js when cart loads) -->
+      <div class="empty-state" id="cart-empty">
+        <span class="empty-icon">🛒</span>
+        <h3>Giỏ hàng đang trống</h3>
+        <p>Thêm sản phẩm vào giỏ để bắt đầu mua sắm</p>
+        <button class="btn-primary" data-page="products">Khám phá sản phẩm</button>
+      </div>
+    </div>
+
+    <!-- ── Order Summary (right column) ──────────────────────── -->
+    <div id="cart-summary-wrap" style="display: none">
+      <div class="summary-card">
+        <h3>Tóm tắt đơn hàng</h3>
+
+        <div class="summary-row">
+          <span>Tạm tính</span>
+          <span id="cart-subtotal">0₫</span>
+        </div>
+        <div class="summary-row">
+          <span>Phí vận chuyển</span>
+          <span class="text-success">Miễn phí</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-row total">
+          <span>Tổng cộng</span>
+          <span id="cart-total">0₫</span>
+        </div>
+
+        <!-- Coupon input -->
+        <div class="coupon-box">
+          <input type="text" id="coupon-input" placeholder="Mã giảm giá" />
+          <button class="btn-outline" id="apply-coupon">Áp dụng</button>
+        </div>
+
+        <button class="btn-primary btn-full" id="checkout-btn">
+          🛍️ Tiến hành thanh toán
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

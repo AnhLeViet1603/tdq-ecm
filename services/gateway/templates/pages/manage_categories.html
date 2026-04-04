@@ -1,0 +1,94 @@
+<!-- ════════════════════════════════════════════════════════════
+     MANAGE CATEGORIES PAGE — pages/manage_categories.html
+     Cho phép Admin/Staff xem, thêm, sửa, xóa thư mục
+════════════════════════════════════════════════════════════ -->
+<div id="page-manage-categories" class="page">
+  <div class="page-toolbar">
+    <div class="search-box">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input
+        type="search"
+        placeholder="Tìm danh mục…"
+        id="manage-category-search"
+        aria-label="Tìm kiếm danh mục"
+      />
+    </div>
+    <button class="btn-primary" id="btn-create-category">+ Tạo danh mục</button>
+  </div>
+
+  <div class="table-card">
+    <table class="data-table" aria-label="Danh sách danh mục">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Hình ảnh</th>
+          <th>Tên danh mục</th>
+          <th>Slug</th>
+          <th>Sắp xếp</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody id="manage-categories-body">
+        <tr><td colspan="7" class="loading-cell">Đang tải…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Thêm/Sửa Category -->
+<div id="category-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="category-modal-title">
+  <div class="modal-backdrop" id="category-modal-backdrop"></div>
+  <div class="modal-content" style="max-width: 500px">
+    <button class="modal-close" id="category-modal-close" aria-label="Đóng">✕</button>
+    <div id="category-modal-body">
+      <h2 class="modal-title" id="category-modal-title" style="margin-bottom: 1.5rem">Thêm danh mục</h2>
+      <form id="category-form">
+        <input type="hidden" id="cat-id" />
+        
+        <div class="field">
+          <label for="cat-name">Tên danh mục <span class="text-danger">*</span></label>
+          <input type="text" id="cat-name" required />
+        </div>
+        
+        <div class="field">
+          <label for="cat-slug">Slug <span class="text-danger">*</span></label>
+          <input type="text" id="cat-slug" required />
+        </div>
+        
+        <div class="field">
+          <label for="cat-image">URL Hình ảnh</label>
+          <input type="url" id="cat-image" placeholder="https://..." />
+        </div>
+        
+        <div class="field-row">
+          <div class="field">
+            <label for="cat-parent">Danh mục cha</label>
+            <select id="cat-parent" class="select">
+              <option value="">-- Không có --</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="cat-sort">Sắp xếp</label>
+            <input type="number" id="cat-sort" value="0" min="0" />
+          </div>
+        </div>
+        
+        <div class="field">
+          <label for="cat-desc">Mô tả</label>
+          <textarea id="cat-desc" rows="3" class="input-lg" style="width:100%; border:1px solid var(--border-1); border-radius:0.5rem; background:var(--bg-1); color:var(--text-1); padding:0.75rem"></textarea>
+        </div>
+        
+        <div class="field" style="display:flex; align-items:center; gap:0.5rem">
+          <input type="checkbox" id="cat-active" checked style="width:auto" />
+          <label for="cat-active" style="margin:0">Kích hoạt</label>
+        </div>
+        
+        <div class="modal-actions" style="margin-top:2rem">
+          <button type="submit" class="btn-primary" style="flex:1">Lưu danh mục</button>
+          <button type="button" class="btn-outline" id="category-modal-cancel">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
