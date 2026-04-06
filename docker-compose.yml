@@ -4,8 +4,9 @@ version: "3.9"
 # E-Commerce Microservices Platform
 # Services: gateway(8000) auth(8001) product(8002) inventory(8003)
 #           cart(8004) order(8005) payment(8006) promotion(8007)
-#           review(8008) shipping(8009)
-# Database: 1 PostgreSQL instance, 9 separate databases
+#           review(8008) shipping(8009) ai(8010)
+# Database: 1 PostgreSQL instance, 10 separate databases
+# Features: AI-powered recommendations, RAG-based consultation chatbot
 # ==============================================================
 
 networks:
@@ -14,6 +15,8 @@ networks:
 
 volumes:
   postgres_data:
+  ai_models:
+  ai_vector_db:
 
 services:
 
@@ -62,6 +65,7 @@ services:
       - promotion
       - review
       - shipping
+      - ai
     networks:
       - ecommerce_network
 
@@ -278,5 +282,35 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # ── AI Service (8010) ────────────────────────────────────────
+  ai:
+    build:
+      context: .
+      dockerfile: services/ai/Dockerfile
+    container_name: ecommerce_ai
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SERVICE_NAME: ai
+      SERVICE_PORT: "8010"
+      DB_NAME: ${AI_DB_NAME:-db_ai}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-all-MiniLM-L6-v2}
+      LLM_MODEL: ${LLM_MODEL:-gpt-3.5-turbo}
+    ports:
+      - "${AI_PORT:-8010}:8010"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ai_models:/app/ml_models
+      - ai_vector_db:/app/vector_db
     networks:
       - ecommerce_network

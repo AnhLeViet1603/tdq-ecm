@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker-compose build:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker-compose exec:*)",
+      "Bash(curl -s http://localhost:8010/api/v1/kb/faqs/)",
+      "Bash(python -m json.tool)",
+      "Bash(curl -s http://localhost:8010/admin/)",
+      "Bash(python populate_all_databases.py)",
+      "Bash(curl -s http://localhost:8000/)",
+      "Bash(docker-compose restart:*)",
+      "Bash(curl -s http://localhost:8000/api/v1/kb/faq-categories/)",
+      "Bash(curl -s http://localhost:8010/api/v1/kb/faq-categories/)",
+      "Bash(curl -s http://localhost:8000/api/ai/v1/kb/faq-categories/)",
+      "Bash(curl -s http://localhost:8010/api/v1/chatbot/chat/ -X POST -H \"Content-Type: application/json\" -d '{\"message\": \"Hello\", \"language\": \"en\", \"use_rag\": false}')",
+      "Bash(chmod +x test_ai_features.sh)",
+      "Bash(./test_ai_features.sh)",
+      "Bash(chmod +x:*)",
+      "Bash(docker-compose ps:*)",
+      "Bash(docker-compose stop:*)",
+      "Bash(docker-compose run:*)",
+      "Bash(curl -s http://localhost:8010/health)",
+      "Bash(curl -X POST http://localhost:8001/api/auth/login/ -H 'Content-Type: application/json' -d '{\"email\":\"admin@shopvn.com\",\"password\":\"admin123\"}' -s)",
+      "Bash(curl -s http://localhost:8000/api/auth/login/ -X POST -H \"Content-Type: application/json\" -d '{\"email\":\"test\",\"password\":\"test\"}')",
+      "Bash(curl -v http://localhost:8000/api/ai/v1/kb/faq-categories/)"
+    ]
+  }
+}

@@ -57,6 +57,7 @@ SERVICE_URLS = {
     "promotions":os.environ.get("PROMOTION_SERVICE_URL", "http://promotion:8007"),
     "reviews":   os.environ.get("REVIEW_SERVICE_URL",    "http://review:8008"),
     "shipping":  os.environ.get("SHIPPING_SERVICE_URL",  "http://shipping:8009"),
+    "ai":        os.environ.get("AI_SERVICE_URL",        "http://ai:8010"),
 }
 
 CORS_ALLOW_ALL_ORIGINS = DEBUG

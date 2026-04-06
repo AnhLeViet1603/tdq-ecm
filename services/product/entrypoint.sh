@@ -20,6 +20,12 @@ python manage.py makemigrations product_catalog --noinput || true
 echo "[$(date -u +%H:%M:%S)] Applying migrations..."
 python manage.py migrate --noinput
 
+echo "[$(date -u +%H:%M:%S)] Auto-initializing sample data..."
+if [ -f "/app/auto_init.sh" ]; then
+    chmod +x /app/auto_init.sh
+    /app/auto_init.sh
+fi
+
 echo "[$(date -u +%H:%M:%S)] Starting product on port ${SERVICE_PORT:-8002}..."
 exec gunicorn config.wsgi:application \
     --bind "0.0.0.0:${SERVICE_PORT:-8002}" \

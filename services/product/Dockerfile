@@ -15,6 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY shared/ /app/shared/
 COPY services/product/ .
 
+COPY services/product/auto_init.sh .
+RUN chmod +x auto_init.sh entrypoint.sh
+
 RUN chmod +x entrypoint.sh
 
 EXPOSE 8002

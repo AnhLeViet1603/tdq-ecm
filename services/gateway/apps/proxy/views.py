@@ -21,6 +21,13 @@ class ProxyView(View):
         base = settings.SERVICE_URLS.get(service)
         if not base:
             return None
+
+        # Special handling for AI service - it uses /api/v1/ instead of /api/ai/
+        if service == "ai":
+            # e.g. GET /api/ai/v1/kb/faq-categories/ → http://ai:8010/api/v1/kb/faq-categories/
+            # The path already includes "v1/" so we don't need to add it again
+            return f"{base.rstrip('/')}/api/{path}"
+
         # Reconstruct the full path — service key == URL prefix on the upstream service.
         # e.g. GET /api/auth/register/ → http://auth:8001/api/auth/register/
         #      GET /api/products/      → http://product:8002/api/products/

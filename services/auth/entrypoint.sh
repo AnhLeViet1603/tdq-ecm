@@ -23,6 +23,12 @@ python manage.py migrate --noinput
 echo "[$(date -u +%H:%M:%S)] Seeding admin account..."
 python manage.py seed_admin
 
+echo "[$(date -u +%H:%M:%S)] Auto-initializing sample data..."
+if [ -f "/app/auto_init.sh" ]; then
+    chmod +x /app/auto_init.sh
+    /app/auto_init.sh
+fi
+
 echo "[$(date -u +%H:%M:%S)] Starting auth on port ${SERVICE_PORT:-8001}..."
 exec gunicorn config.wsgi:application \
     --bind "0.0.0.0:${SERVICE_PORT:-8001}" \

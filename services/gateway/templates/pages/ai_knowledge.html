@@ -1,0 +1,643 @@
+<!-- ════════════════════════════════════════════════════════════
+     AI KNOWLEDGE BASE — pages/ai_knowledge.html
+     Knowledge Base search and FAQ interface
+════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-ai-knowledge">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>📚 Cơ sở kiến thức</h1>
+      <p>Tìm kiếm thông minh với Vector Embeddings và RAG</p>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-outline" id="knowledge-filters-btn">
+        <span>🔍</span> Bộ lọc
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <input
+          type="text"
+          class="search-input"
+          id="knowledge-search-input"
+          placeholder="Tìm kiếm trong cơ sở kiến thức... (VD: chính sách đổi trả, giao hàng)"
+          autocomplete="off"
+        />
+        <div class="search-actions">
+          <button class="btn-icon" id="clear-search" title="Xóa">✕</button>
+          <button class="btn btn-primary" id="search-knowledge-btn" title="Tìm kiếm">
+            <span>🔍</span>
+          </button>
+        </div>
+      </div>
+      <div class="search-suggestions" id="search-suggestions">
+        <div class="suggestion-category">
+          <h4>Câu hỏi thường gặp</h4>
+          <div class="suggestion-tags">
+            <button class="suggestion-tag">🔄 Chính sách đổi trả</button>
+            <button class="suggestion-tag">🚚 Giao hàng</button>
+            <button class="suggestion-tag">💳 Thanh toán</button>
+            <button class="suggestion-tag">📦 Theo dõi đơn hàng</button>
+          </div>
+        </div>
+        <div class="suggestion-category">
+          <h4>Tìm kiếm phổ biến</h4>
+          <div class="suggestion-tags">
+            <button class="suggestion-tag">⏰ Thời gian giao hàng</button>
+            <button class="suggestion-tag">💰 Phí vận chuyển</button>
+            <button class="suggestion-tag">🎁 Khuyến mãi</button>
+            <button class="suggestion-tag">🔒 Bảo mật thông tin</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Panel (Collapsible) -->
+  <div class="filters-panel" id="filters-panel" style="display: none;">
+    <div class="filters-header">
+      <h3>Bộ lọc tìm kiếm</h3>
+      <button class="btn-icon" id="close-filters">✕</button>
+    </div>
+    <div class="filters-content">
+      <div class="filter-group">
+        <label>Loại tài liệu</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item">
+            <input type="checkbox" value="faq" checked>
+            <span>❓ Câu hỏi thường gặp</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="policy" checked>
+            <span>📋 Chính sách</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="product" checked>
+            <span>📦 Sản phẩm</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" value="guide" checked>
+            <span>📖 Hướng dẫn</span>
+          </label>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label>Độ tương đồng</label>
+        <div class="range-slider">
+          <input type="range" min="0" max="100" value="60" id="similarity-slider">
+          <div class="range-labels">
+            <span>0%</span>
+            <span id="similarity-value">60%</span>
+            <span>100%</span>
+          </div>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label>Ngôn ngữ</label>
+        <select class="select" id="language-filter">
+          <option value="all">Tất cả</option>
+          <option value="vi" selected>Tiếng Việt</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Results -->
+  <div class="search-results" id="search-results">
+    <!-- Initial State -->
+    <div class="results-placeholder" id="results-placeholder">
+      <div class="placeholder-icon">🔍</div>
+      <h2>Bắt đầu tìm kiếm</h2>
+      <p>Nhập từ khóa để tìm kiếm trong cơ sở kiến thức thông minh</p>
+      <div class="quick-searches">
+        <h4>Tìm kiếm nhanh:</h4>
+        <div class="quick-search-tags">
+          <button class="quick-search-tag" data-query="Làm sao để đổi trả sản phẩm?">
+            🔄 Đổi trả sản phẩm
+          </button>
+          <button class="quick-search-tag" data-query="Thời gian giao hàng bao lâu?">
+            ⏰ Thời gian giao hàng
+          </button>
+          <button class="quick-search-tag" data-query="Các phương thức thanh toán">
+            💳 Phương thức thanh toán
+          </button>
+          <button class="quick-search-tag" data-query="Theo dõi trạng thái đơn hàng">
+            📦 Theo dõi đơn hàng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="results-loading hidden" id="results-loading">
+      <div class="loading-spinner"></div>
+      <p>Đang tìm kiếm trong cơ sở kiến thức...</p>
+    </div>
+
+    <!-- Results List -->
+    <div class="results-list hidden" id="results-list">
+      <div class="results-header">
+        <h3>Tìm thấy <span id="results-count">0</span> kết quả</h3>
+        <div class="results-sort">
+          <select class="select" id="sort-by">
+            <option value="relevance">Mức độ liên quan</option>
+            <option value="newest">Mới nhất</option>
+            <option value="helpful">Hữu ích nhất</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="results-items" id="results-items">
+        <!-- Results will be dynamically loaded here -->
+      </div>
+
+      <div class="results-pagination" id="results-pagination">
+        <button class="btn btn-outline" id="prev-page" disabled>Trang trước</button>
+        <div class="page-info">Trang <span id="current-page">1</span> / <span id="total-pages">1</span></div>
+        <button class="btn btn-outline" id="next-page">Trang sau</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ Categories Section -->
+  <div class="faq-categories-section">
+    <h2>📁 Danh mục FAQ</h2>
+    <div class="categories-grid" id="faq-categories">
+      <div class="category-card" data-category="products">
+        <div class="category-icon">📦</div>
+        <h3>Sản phẩm</h3>
+        <p>Thông tin về sản phẩm, tính năng, cách sử dụng</p>
+        <span class="category-count">15 FAQs</span>
+      </div>
+      <div class="category-card" data-category="orders">
+        <div class="category-icon">🛒</div>
+        <h3>Đơn hàng</h3>
+        <p>Đặt hàng, theo dõi, thay đổi, hủy đơn</p>
+        <span class="category-count">12 FAQs</span>
+      </div>
+      <div class="category-card" data-category="shipping">
+        <div class="category-icon">🚚</div>
+        <h3>Giao hàng</h3>
+        <p>Phương thức, thời gian, phí giao hàng</p>
+        <span class="category-count">8 FAQs</span>
+      </div>
+      <div class="category-card" data-category="returns">
+        <div class="category-icon">🔄</div>
+        <h3>Đổi trả</h3>
+        <p>Chính sách đổi trả, hoàn tiền</p>
+        <span class="category-count">10 FAQs</span>
+      </div>
+      <div class="category-card" data-category="payments">
+        <div class="category-icon">💳</div>
+        <h3>Thanh toán</h3>
+        <p>Phương thức thanh toán, bảo mật</p>
+        <span class="category-count">6 FAQs</span>
+      </div>
+      <div class="category-card" data-category="account">
+        <div class="category-icon">👤</div>
+        <h3>Tài khoản</h3>
+        <p>Quản lý tài khoản, bảo mật</p>
+        <span class="category-count">9 FAQs</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Document Detail Modal -->
+  <div class="modal" id="document-modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3 id="document-title">Document Title</h3>
+        <button class="btn-icon close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="document-metadata" id="document-metadata">
+          <span class="metadata-item">
+            <span class="metadata-icon">📁</span>
+            <span class="metadata-value">FAQ</span>
+          </span>
+          <span class="metadata-item">
+            <span class="metadata-icon">🎯</span>
+            <span class="metadata-value">85% relevant</span>
+          </span>
+          <span class="metadata-item">
+            <span class="metadata-icon">👍</span>
+            <span class="metadata-value">Helpful (24)</span>
+          </span>
+        </div>
+        <div class="document-content" id="document-content">
+          <!-- Document content will be loaded here -->
+        </div>
+        <div class="document-actions">
+          <button class="btn btn-outline" id="copy-document-btn">
+            <span>📋</span> Sao chép
+          </button>
+          <button class="btn btn-outline" id="share-document-btn">
+            <span>🔗</span> Chia sẻ
+          </button>
+          <button class="btn btn-primary" id="helpful-document-btn">
+            <span>👍</span> Hữu ích
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Search Section */
+  .search-section {
+    margin: 1.5rem 0;
+  }
+
+  .search-container {
+    position: relative;
+  }
+
+  .search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: var(--surface-1);
+    border: 2px solid var(--border-1);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .search-input-wrapper:focus-within {
+    border-color: var(--primary);
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  .search-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--surface-1);
+    border: 1px solid var(--border-1);
+    border-radius: 12px;
+    margin-top: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+  }
+
+  .search-suggestions.active {
+    display: block;
+  }
+
+  .suggestion-category {
+    margin-bottom: 1rem;
+  }
+
+  .suggestion-category:last-child {
+    margin-bottom: 0;
+  }
+
+  .suggestion-category h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  .suggestion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .suggestion-tag {
+    background: var(--surface-2);
+    border: 1px solid var(--border-1);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .suggestion-tag:hover {
+    background: var(--primary-h);
+    border-color: var(--primary);
+  }
+
+  /* Filters Panel */
+  .filters-panel {
+    background: var(--surface-1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border-1);
+  }
+
+  .filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .filters-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-group label {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  .range-slider {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .range-slider input[type="range"] {
+    width: 100%;
+  }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  /* Search Results */
+  .search-results {
+    margin: 1.5rem 0;
+  }
+
+  .results-placeholder {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .quick-searches {
+    margin-top: 2rem;
+  }
+
+  .quick-searches h4 {
+    margin: 0 0 1rem 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  .quick-search-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .quick-search-tag {
+    background: var(--primary-h);
+    border: 1px solid var(--primary);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .quick-search-tag:hover {
+    background: var(--primary);
+    color: white;
+  }
+
+  .results-loading {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-1);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .results-list {
+    background: var(--surface-1);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .result-item {
+    padding: 1.5rem;
+    border: 1px solid var(--border-1);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .result-item:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .result-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.75rem;
+    gap: 1rem;
+  }
+
+  .result-type {
+    background: var(--primary-h);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .result-score {
+    font-size: 0.875rem;
+    opacity: 0.7;
+  }
+
+  .result-title {
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-excerpt {
+    opacity: 0.8;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .result-footer {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    opacity: 0.6;
+  }
+
+  /* FAQ Categories */
+  .faq-categories-section {
+    margin: 2rem 0;
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .category-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border-1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .category-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .category-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .category-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .category-card p {
+    margin: 0 0 1rem 0;
+    font-size: 0.875rem;
+    opacity: 0.7;
+  }
+
+  .category-count {
+    background: var(--primary-h);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Document Modal */
+  .document-metadata {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .metadata-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--surface-2);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+  }
+
+  .document-content {
+    line-height: 1.8;
+    margin: 1.5rem 0;
+  }
+
+  .document-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .categories-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .filters-content {
+      grid-template-columns: 1fr;
+    }
+
+    .results-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

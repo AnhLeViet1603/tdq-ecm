@@ -14,7 +14,7 @@ urlpatterns = [
     # Proxy all /api/<service>/... to the matching microservice
     re_path(r"^api/(?P<service>[^/]+)/(?P<path>.*)$", ProxyView.as_view(), name="proxy"),
     # Serve SPA frontend for every other route (including root /)
-    re_path(r"^.*$", FrontendView.as_view(), name="frontend"),
+    path("", FrontendView.as_view(), name="frontend"),
 ]
 
 # Serve local static files in development

@@ -18,6 +18,7 @@ const API = {
   promotions:'/api/promotions',
   reviews:   '/api/reviews',
   shipping:  '/api/shipping',
+  ai:        'http://localhost:8010/api', // Direct AI service connection
 };
 
 // ════════════════════════════════════════════════════════════
@@ -242,6 +243,9 @@ const PAGE_TITLES = {
   'manage-products':   'Quản lý Sản phẩm',
   'product-detail':    'Chi tiết sản phẩm',
   'checkout':          'Thanh toán',
+  'ai-chatbot':       'Trợ lý AI',
+  'ai-recommendations': 'Gợi ý AI',
+  'ai-knowledge':      'Kiến thức AI',
 };
 
 function navigateTo(page) {
@@ -273,6 +277,9 @@ function navigateTo(page) {
     'manage-products':   loadManageProducts,
     'product-detail':    loadProductDetailPage,
     'checkout':          loadCheckoutPage,
+    'ai-chatbot':        loadAIChatbot,
+    'ai-recommendations': loadAIRecommendations,
+    'ai-knowledge':      loadAIKnowledge,
   };
   loaders[page]?.();
 }
@@ -1474,3 +1481,162 @@ async function boot() {
 }
 
 boot();
+
+// ════════════════════════════════════════════════════════════
+//  AI FEATURES
+// ════════════════════════════════════════════════════════════
+
+async function loadAIChatbot() {
+  console.log('Loading AI Chatbot...');
+  // Initialize chatbot functionality
+  initChatbot();
+}
+
+async function loadAIRecommendations() {
+  console.log('Loading AI Recommendations...');
+  try {
+    // Get personalized recommendations
+    const response = await apiGet('/api/ai/v1/ai/recommendations/', {
+      user_id: State.user?.id || 'guest',
+      algorithm: 'neural_cf',
+      limit: 10
+    });
+    displayRecommendations(response.data || []);
+  } catch (error) {
+    console.error('Failed to load recommendations:', error);
+    displayMockRecommendations();
+  }
+}
+
+async function loadAIKnowledge() {
+  console.log('Loading AI Knowledge Base...');
+  try {
+    // Load FAQ categories
+    const response = await apiGet('/api/ai/v1/kb/faq-categories/');
+    displayFAQCategories(response.data || []);
+  } catch (error) {
+    console.error('Failed to load knowledge base:', error);
+    displayMockFAQCategories();
+  }
+}
+
+// Chatbot functionality
+function initChatbot() {
+  const chatInput = qs('#chat-input');
+  const sendBtn = qs('#send-btn');
+  const suggestions = qsa('.suggestion-btn, .quick-search-tag');
+
+  if (chatInput && sendBtn) {
+    // Send message on Enter (without Shift)
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Auto-resize textarea
+    chatInput.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+  }
+
+  // Handle suggestion clicks
+  suggestions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const message = btn.dataset.message || btn.textContent.trim();
+      if (chatInput) {
+        chatInput.value = message;
+        sendMessage();
+      }
+    });
+  });
+}
+
+async function sendMessage() {
+  const chatInput = qs('#chat-input');
+  const message = chatInput?.value.trim();
+  if (!message) return;
+
+  // Add user message to chat
+  addMessageToChat('user', message);
+  chatInput.value = '';
+  chatInput.style.height = 'auto';
+
+  // Show typing indicator
+  showTypingIndicator();
+
+  try {
+    const response = await apiPost('/api/ai/v1/chatbot/chat/', {
+      message: message,
+      language: 'vi',
+      use_rag: true
+    });
+
+    hideTypingIndicator();
+    addMessageToChat('assistant', response.content);
+  } catch (error) {
+    hideTypingIndicator();
+    addMessageToChat('assistant', 'Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.');
+  }
+}
+
+function addMessageToChat(role, content) {
+  const chatMessages = qs('#chat-messages');
+  if (!chatMessages) return;
+
+  // Remove welcome message if exists
+  const welcomeMessage = qs('.welcome-message');
+  if (welcomeMessage) welcomeMessage.remove();
+
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message ${role}`;
+  messageDiv.innerHTML = `
+    <div class="message-avatar">${role === 'user' ? '👤' : '🤖'}</div>
+    <div class="message-content">
+      <div class="message-bubble">${content}</div>
+      <div class="message-time">${new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'})}</div>
+    </div>
+  `;
+  chatMessages.appendChild(messageDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showTypingIndicator() {
+  const indicator = qs('#typing-indicator');
+  if (indicator) indicator.classList.remove('hidden');
+}
+
+function hideTypingIndicator() {
+  const indicator = qs('#typing-indicator');
+  if (indicator) indicator.classList.add('hidden');
+}
+
+// Recommendations display
+function displayRecommendations(recommendations) {
+  // Implementation for displaying recommendations
+  console.log('Displaying recommendations:', recommendations);
+}
+
+function displayMockRecommendations() {
+  // Mock recommendations for demo
+  const mockRecs = [
+    { product_id: '1', product_name: 'iPhone 15 Pro Max', score: 0.95 },
+    { product_id: '2', product_name: 'Samsung Galaxy S24 Ultra', score: 0.92 },
+    { product_id: '3', product_name: 'MacBook Pro 16"', score: 0.88 },
+  ];
+  displayRecommendations(mockRecs);
+}
+
+// Knowledge Base display
+function displayFAQCategories(categories) {
+  console.log('Displaying FAQ categories:', categories);
+}
+
+function displayMockFAQCategories() {
+  // Mock FAQ categories for demo
+  console.log('Using mock FAQ categories');
+}

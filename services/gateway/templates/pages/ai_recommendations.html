@@ -1,0 +1,413 @@
+<!-- ════════════════════════════════════════════════════════════
+     AI RECOMMENDATIONS — pages/ai_recommendations.html
+     Personalized product recommendations powered by Deep Learning
+════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-ai-recommendations">
+  <div class="page-header">
+    <div class="page-title">
+      <h1>🎯 Gợi ý cho bạn</h1>
+      <p>Sản phẩm được cá nhân hóa bởi AI - Neural Collaborative Filtering</p>
+    </div>
+    <div class="page-actions">
+      <select class="select" id="recommendation-algorithm">
+        <option value="neural_cf">🧠 Neural CF</option>
+        <option value="content_based">📝 Content-based</option>
+        <option value="hybrid">🔀 Hybrid</option>
+      </select>
+      <button class="btn btn-primary" id="refresh-recommendations">
+        <span>🔄</span> Làm mới
+      </button>
+    </div>
+  </div>
+
+  <!-- AI Insight Cards -->
+  <div class="ai-insights-grid">
+    <div class="insight-card">
+      <div class="insight-icon">🧠</div>
+      <div class="insight-content">
+        <h3>Neural Collaborative Filtering</h3>
+        <p>Deep Learning model phân tích hành vi của bạn và hàng triệu người dùng khác</p>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">📊</div>
+      <div class="insight-content">
+        <h3>Độ chính xác: 87%</h3>
+        <p>Mô hình được train với 50K+ tương tác người dùng</p>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">⚡</div>
+      <div class="insight-content">
+        <h3>Real-time Personalization</h3>
+        <p>Cập nhật gợi ý tức thì dựa trên hành vi hiện tại</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recommendation Categories -->
+  <div class="recommendation-sections">
+    <!-- Because You Viewed -->
+    <section class="recommendation-section">
+      <div class="section-header">
+        <h2>👁️ Vì bạn đã xem</h2>
+        <p>Dựa trên sản phẩm bạn vừa xem</p>
+      </div>
+      <div class="product-grid" id="viewed-recommendations">
+        <div class="loading-skeleton">Đang tải gợi ý...</div>
+      </div>
+    </section>
+
+    <!-- Because You Purchased -->
+    <section class="recommendation-section">
+      <div class="section-header">
+        <h2>💰 Vì bạn đã mua</h2>
+        <p>Khách hàng đã mua sản phẩm này cũng mua</p>
+      </div>
+      <div class="product-grid" id="purchased-recommendations">
+        <div class="loading-skeleton">Đang tải gợi ý...</div>
+      </div>
+    </section>
+
+    <!-- Trending Now -->
+    <section class="recommendation-section">
+      <div class="section-header">
+        <h2>🔥 Đang hot</h2>
+        <p>Sản phẩm thịnh hành tuần này</p>
+      </div>
+      <div class="product-grid" id="trending-recommendations">
+        <div class="loading-skeleton">Đang tải gợi ý...</div>
+      </div>
+    </section>
+
+    <!-- Personalized For You -->
+    <section class="recommendation-section">
+      <div class="section-header">
+        <h2>🎁 Dành riêng cho bạn</h2>
+        <p>Dựa trên sở thích và hành vi của bạn</p>
+      </div>
+      <div class="product-grid" id="personalized-recommendations">
+        <div class="loading-skeleton">Đang tải gợi ý...</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Why Recommended Modal -->
+  <div class="modal" id="recommendation-reason-modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3>💡 Tại sao được gợi ý?</h3>
+        <button class="btn-icon close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="reason-content">
+          <div class="reason-item">
+            <div class="reason-icon">🎯</div>
+            <div class="reason-text">
+              <h4>Khớp với sở thích của bạn</h4>
+              <p>Sản phẩm này phù hợp với lịch sử mua sắm của bạn</p>
+              <div class="match-score">
+                <div class="score-bar">
+                  <div class="score-fill" style="width: 85%;"></div>
+                </div>
+                <span class="score-text">85% khớp</span>
+              </div>
+            </div>
+          </div>
+          <div class="reason-item">
+            <div class="reason-icon">👥</div>
+            <div class="reason-text">
+              <h4>Phổ biến với người dùng tương tự</h4>
+              <p>Người dùng có sở thích giống bạn cũng thích sản phẩm này</p>
+              <div class="user-similarity">
+                <span class="similarity-tag">92% similar users</span>
+                <span class="similarity-tag">Purchased 1.2K times</span>
+              </div>
+            </div>
+          </div>
+          <div class="reason-item">
+            <div class="reason-icon">⭐</div>
+            <div class="reason-text">
+              <h4>Đánh giá cao</h4>
+              <p>4.8/5 sao từ 320 đánh giá</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="dismiss-recommendation">Ẩn sản phẩm này</button>
+        <button class="btn btn-primary" id="add-to-cart-from-recommendation">Thêm vào giỏ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* AI Insights Grid */
+  .ai-insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .insight-card {
+    background: var(--surface-1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: start;
+    border: 1px solid var(--border-1);
+    transition: all 0.2s;
+  }
+
+  .insight-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .insight-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .insight-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .insight-content p {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.7;
+    line-height: 1.5;
+  }
+
+  /* Recommendation Sections */
+  .recommendation-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .recommendation-section {
+    background: var(--surface-1);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .section-header p {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.6;
+  }
+
+  /* Product Grid */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .product-card {
+    background: var(--surface-2);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-image {
+    width: 100%;
+    height: 200px;
+    background: var(--surface-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    position: relative;
+  }
+
+  .product-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: var(--primary);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .product-info {
+    padding: 1rem;
+  }
+
+  .product-name {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .product-price {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .current-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  .product-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+  }
+
+  .stars {
+    color: #fbbf24;
+  }
+
+  .rating-count {
+    opacity: 0.6;
+  }
+
+  .recommendation-reason {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: var(--primary-h);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Recommendation Reason Modal */
+  .reason-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .reason-item {
+    display: flex;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .reason-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .reason-text h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+  }
+
+  .reason-text p {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.875rem;
+    opacity: 0.7;
+  }
+
+  .match-score {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .score-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #10b981);
+    transition: width 0.3s;
+  }
+
+  .score-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .user-similarity {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .similarity-tag {
+    background: var(--primary-h);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  /* Loading Skeleton */
+  .loading-skeleton {
+    padding: 2rem;
+    text-align: center;
+    opacity: 0.6;
+    grid-column: 1 / -1;
+  }
+
+  /* Modal Sizes */
+  .modal-lg {
+    max-width: 600px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .ai-insights-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .product-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .product-image {
+      height: 150px;
+    }
+  }
+</style>
