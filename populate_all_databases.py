@@ -45,7 +45,7 @@ def populate_auth_db():
         if not User.objects.filter(username=username).exists():
             user = User.objects.create_user(
                 username=username,
-                email=f"user{i+1}@example.com',
+                email=f"user{i+1}@example.com",
                 password='password123',
                 first_name=random.choice(first_names),
                 last_name=random.choice(last_names),
@@ -74,6 +74,11 @@ def populate_product_db():
         {'name': 'Laptop', 'slug': 'laptop', 'description': 'Laptop công việc', 'parent': None},
         {'name': 'MacBook', 'slug': 'macbook', 'description': 'MacBook Apple', 'parent': 'laptop'},
         {'name': 'Dell', 'slug': 'dell', 'description': 'Laptop Dell', 'parent': 'laptop'},
+        {'name': 'Máy tính bảng', 'slug': 'may-tinh-bang', 'description': 'Máy tính bảng Tablet', 'parent': None},
+        {'name': 'iPad', 'slug': 'ipad', 'description': 'iPad Apple chính hãng', 'parent': 'may-tinh-bang'},
+        {'name': 'Samsung Tablet', 'slug': 'samsung-tablet', 'description': 'Samsung Galaxy Tab', 'parent': 'may-tinh-bang'},
+        {'name': 'Phụ kiện', 'slug': 'phu-kien', 'description': 'Phụ kiện công nghệ', 'parent': None},
+        {'name': 'Tai nghe', 'slug': 'tai-nghe', 'description': 'Tai nghe Bluetooth', 'parent': 'phu-kien'},
     ]
 
     for cat in category_data:
@@ -92,20 +97,56 @@ def populate_product_db():
 
     product_templates = [
         {'name': 'iPhone 15 Pro Max', 'category': 'iphone', 'price': 34990000, 'desc': 'iPhone 15 Pro Max 256GB'},
-        {'name': 'Samsung Galaxy S24 Ultra', 'category': 'samsung', 'price': 28990000, 'desc': 'Galaxy S24 Ultra 512GB'},
-        {'name': 'MacBook Pro 16" M3', 'category': 'macbook', 'price': 49990000, 'desc': 'MacBook Pro 16" M3 Pro 512GB'},
-        {'name': 'Dell XPS 15', 'category': 'dell', 'price': 35990000, 'desc': 'Dell XPS 15 9530 Core i7'},
+        {'name': 'iPhone 15 Pro', 'category': 'iphone', 'price': 28990000, 'desc': 'iPhone 15 Pro 128GB'},
+        {'name': 'iPhone 15', 'category': 'iphone', 'price': 22990000, 'desc': 'iPhone 15 128GB'},
+        {'name': 'iPhone 14 Pro Max', 'category': 'iphone', 'price': 27990000, 'desc': 'iPhone 14 Pro Max 256GB'},
         {'name': 'iPhone 14', 'category': 'iphone', 'price': 18990000, 'desc': 'iPhone 14 128GB'},
+        {'name': 'iPhone 13', 'category': 'iphone', 'price': 15990000, 'desc': 'iPhone 13 128GB'},
+        {'name': 'Samsung Galaxy S24 Ultra', 'category': 'samsung', 'price': 28990000, 'desc': 'Galaxy S24 Ultra 512GB'},
+        {'name': 'Samsung Galaxy S24+', 'category': 'samsung', 'price': 25990000, 'desc': 'Galaxy S24+ 256GB'},
+        {'name': 'Samsung Galaxy S24', 'category': 'samsung', 'price': 21990000, 'desc': 'Galaxy S24 256GB'},
         {'name': 'Samsung Galaxy Z Fold5', 'category': 'samsung', 'price': 41990000, 'desc': 'Galaxy Z Fold5 512GB'},
+        {'name': 'Samsung Galaxy Z Flip5', 'category': 'samsung', 'price': 25990000, 'desc': 'Galaxy Z Flip5 256GB'},
+        {'name': 'Samsung Galaxy A54', 'category': 'samsung', 'price': 10490000, 'desc': 'Galaxy A54 5G'},
+        {'name': 'MacBook Pro 16" M3 Max', 'category': 'macbook', 'price': 79990000, 'desc': 'MacBook Pro 16" M3 Max 1TB'},
+        {'name': 'MacBook Pro 16" M3 Pro', 'category': 'macbook', 'price': 49990000, 'desc': 'MacBook Pro 16" M3 Pro 512GB'},
+        {'name': 'MacBook Pro 14" M3 Pro', 'category': 'macbook', 'price': 39990000, 'desc': 'MacBook Pro 14" M3 Pro 512GB'},
+        {'name': 'MacBook Air 15" M2', 'category': 'macbook', 'price': 32990000, 'desc': 'MacBook Air 15" M2 256GB'},
+        {'name': 'MacBook Air 13" M2', 'category': 'macbook', 'price': 27990000, 'desc': 'MacBook Air 13" M2 256GB'},
+        {'name': 'MacBook Air 13" M1', 'category': 'macbook', 'price': 18990000, 'desc': 'MacBook Air 13" M1 256GB'},
+        {'name': 'Dell XPS 15 9530', 'category': 'dell', 'price': 35990000, 'desc': 'Dell XPS 15 9530 Core i7'},
+        {'name': 'Dell XPS 13 Plus', 'category': 'dell', 'price': 32990000, 'desc': 'Dell XPS 13 Plus Core i7'},
+        {'name': 'Dell Inspiron 16', 'category': 'dell', 'price': 21990000, 'desc': 'Dell Inspiron 16 Core i5'},
+        {'name': 'Dell Inspiron 15', 'category': 'dell', 'price': 16990000, 'desc': 'Dell Inspiron 15 Core i5'},
+        {'name': 'Dell Vostro 15', 'category': 'dell', 'price': 14990000, 'desc': 'Dell Vostro 15 Core i5'},
+        {'name': 'Dell Alienware m16', 'category': 'dell', 'price': 55990000, 'desc': 'Dell Alienware m16 RTX 4070'},
+        {'name': 'iPad Pro 12.9 M2', 'category': 'ipad', 'price': 31990000, 'desc': 'iPad Pro 12.9 inch M2 256GB'},
+        {'name': 'iPad Pro 11 M2', 'category': 'ipad', 'price': 23990000, 'desc': 'iPad Pro 11 inch M2 128GB'},
+        {'name': 'iPad Air 5 M1', 'category': 'ipad', 'price': 15990000, 'desc': 'iPad Air 5 M1 64GB'},
+        {'name': 'iPad mini 6', 'category': 'ipad', 'price': 13490000, 'desc': 'iPad mini 6 64GB'},
+        {'name': 'iPad Gen 10', 'category': 'ipad', 'price': 10990000, 'desc': 'iPad Gen 10 64GB'},
+        {'name': 'iPad Gen 9', 'category': 'ipad', 'price': 7490000, 'desc': 'iPad Gen 9 64GB'},
+        {'name': 'Samsung Galaxy Tab S9 Ultra', 'category': 'samsung-tablet', 'price': 32990000, 'desc': 'Galaxy Tab S9 Ultra 5G'},
+        {'name': 'Samsung Galaxy Tab S9+', 'category': 'samsung-tablet', 'price': 25990000, 'desc': 'Galaxy Tab S9+ 5G'},
+        {'name': 'Samsung Galaxy Tab S9', 'category': 'samsung-tablet', 'price': 19990000, 'desc': 'Galaxy Tab S9 5G'},
+        {'name': 'Samsung Galaxy Tab S9 FE+', 'category': 'samsung-tablet', 'price': 13990000, 'desc': 'Galaxy Tab S9 FE+ 5G'},
+        {'name': 'Samsung Galaxy Tab A9+', 'category': 'samsung-tablet', 'price': 5990000, 'desc': 'Galaxy Tab A9+ WiFi'},
+        {'name': 'AirPods Pro 2', 'category': 'tai-nghe', 'price': 6190000, 'desc': 'Apple AirPods Pro 2 Type-C'},
+        {'name': 'AirPods 3', 'category': 'tai-nghe', 'price': 4490000, 'desc': 'Apple AirPods 3 MagSafe'},
+        {'name': 'Sony WF-1000XM5', 'category': 'tai-nghe', 'price': 6990000, 'desc': 'Tai nghe chống ồn Sony WF-1000XM5'},
+        {'name': 'Sony WH-1000XM5', 'category': 'tai-nghe', 'price': 7990000, 'desc': 'Tai nghe chụp tai chống ồn Sony WH-1000XM5'},
+        {'name': 'Samsung Galaxy Buds2 Pro', 'category': 'tai-nghe', 'price': 4990000, 'desc': 'Samsung Galaxy Buds2 Pro'},
     ]
 
     for i, template in enumerate(product_templates):
-        if not Product.objects.filter(slug=f"{template['category']}-{i}").exists():
-            category = Category.objects.get(slug=template['category'])
+        # We need a proper sequence independent of category for slugs uniqueness if we change the loop below
+        category = Category.objects.get(slug=template['category'])
+        product_slug = f"{template['category']}-{i}"
+        if not Product.objects.filter(slug=product_slug).exists():
             product = Product.objects.create(
                 sku=f"SKU-{template['category'].upper()}-{i+1:03d}",
                 name=template['name'],
-                slug=f"{template['category']}-{i}",
+                slug=product_slug,
                 description=template['desc'],
                 category=category,
                 base_price=template['price'],

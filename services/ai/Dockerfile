@@ -4,9 +4,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    netcat-traditional \
-    gcc \
-    g++ \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -14,11 +12,10 @@ WORKDIR /app
 COPY services/ai/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy shared utilities if any
 COPY shared/ /app/shared/
+# Copy service code
 COPY services/ai/ .
-
-COPY services/ai/auto_init.sh .
-RUN chmod +x auto_init.sh entrypoint.sh
 
 RUN chmod +x entrypoint.sh
 
