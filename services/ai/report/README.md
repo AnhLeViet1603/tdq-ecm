@@ -97,7 +97,7 @@ Mở trình duyệt tại: **http://localhost:8501**
 
 ### Biến môi trường (tuỳ chọn):
 ```bash
-set GEMINI_API_KEY=AIzaSyDxqxtaY0j34jqfhbPLtCA38Ws07l5q45k
+set GEMINI_API_KEY=
 set NEO4J_URI=bolt://localhost:7687
 set NEO4J_USER=neo4j
 set NEO4J_PASSWORD=your_password
