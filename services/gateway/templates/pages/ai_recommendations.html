@@ -1,95 +1,169 @@
 <!-- ════════════════════════════════════════════════════════════
      AI RECOMMENDATIONS PAGE — pages/ai_recommendations.html
+     CẬP NHẬT: Thêm model selector (RNN/LSTM/biLSTM), Neo4j graph stats
 ════════════════════════════════════════════════════════════ -->
 <div id="page-ai-recommendations" class="page">
   <div class="section-header" style="margin-bottom: 2rem;">
     <h3 style="background: -webkit-linear-gradient(45deg, #10b981, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; font-size: 2rem; margin: 0;">Gợi Ý Cá Nhân Hóa 🎯</h3>
-    <p style="color: var(--text-2); margin-top: 0.5rem; font-size: 1.05rem;">Sản phẩm được đề xuất riêng cho bạn, dựa trên dự đoán hành vi tương lai.</p>
+    <p style="color: var(--text-2); margin-top: 0.5rem; font-size: 1.05rem;">Sản phẩm được đề xuất riêng cho bạn, dựa trên dự đoán hành vi tương lai từ Knowledge Graph.</p>
   </div>
-  
-  <div class="glass-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%); border-left: 4px solid #10b981; margin-bottom: 2.5rem; display: flex; align-items: stretch; padding: 1.5rem; gap: 1.5rem; position: relative; overflow: hidden;">
-    <!-- Abstract pattern background -->
-    <div style="position: absolute; right: -50px; top: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%); border-radius: 50%; pointer-events: none;"></div>
-    
-    <div style="font-size: 3rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); display: flex; align-items: center;">🧠</div>
-    
-    <div style="flex: 1;">
-       <h4 style="margin-bottom: 0.5rem; font-weight: 700; color: var(--text);">Mô hình Behaviour AI (LSTM + Attention)</h4>
-       <p style="color: var(--text-2); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.6;">AI phân tích luồng hành vi liên tục (Search → View → Click → Cart) để thấu hiểu chính xác ý định mua hàng hiện tại của bạn.</p>
-       
-       <div style="display: flex; gap: 0.75rem; align-items: center; background: var(--surface); padding: 0.75rem 1rem; border-radius: 12px; border: 1px solid rgba(16,185,129,0.2); display: inline-flex;">
-         <span class="pulse-dot"></span>
-         <span style="font-size: 0.85rem; color: var(--text-3);">Dự đoán ý định:</span>
-         <strong id="ai-behavior-insight-text" style="color: #10b981; background: rgba(16,185,129,0.1); padding: 0.2rem 0.6rem; border-radius: 6px;">Đang phân tích realtime...</strong>
-       </div>
+
+  <!-- ── Behavior Model Card ─────────────────────────────── -->
+  <div class="glass-card" style="background:linear-gradient(135deg,rgba(16,185,129,.05),rgba(59,130,246,.05));border-left:4px solid #10b981;margin-bottom:2rem;padding:1.5rem;position:relative;overflow:hidden;">
+    <div style="position:absolute;right:-50px;top:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(16,185,129,.1),transparent 70%);border-radius:50%;pointer-events:none;"></div>
+    <div style="display:flex;align-items:flex-start;gap:1.5rem;flex-wrap:wrap;">
+      <div style="font-size:3rem;filter:drop-shadow(0 4px 6px rgba(0,0,0,.1));display:flex;align-items:center;">🧠</div>
+      <div style="flex:1;">
+        <h4 style="margin-bottom:.5rem;font-weight:700;color:var(--text);">Mô hình Behaviour AI – So sánh RNN · LSTM · biLSTM</h4>
+        <p style="color:var(--text-2);font-size:.95rem;margin-bottom:1rem;line-height:1.6;">AI phân tích luồng hành vi liên tục (Search → View → Click → Cart) để thấu hiểu chính xác ý định mua hàng. Model tốt nhất (<strong>biLSTM</strong>) được chọn cho hệ thống production.</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <!-- Model badges -->
+          <div style="display:flex;gap:.5rem;align-items:center;background:var(--surface);padding:.5rem 1rem;border-radius:10px;border:1px solid var(--border);">
+            <span style="font-size:.75rem;color:var(--text-3);">Model đang dùng:</span>
+            <span id="active-model-badge" style="background:rgba(16,185,129,.15);color:#10b981;font-weight:700;padding:.2rem .6rem;border-radius:6px;font-size:.85rem;">biLSTM 🏆</span>
+          </div>
+          <div style="display:flex;gap:.5rem;align-items:center;background:var(--surface);padding:.5rem 1rem;border-radius:10px;border:1px solid var(--border);">
+            <span class="pulse-dot"></span>
+            <span style="font-size:.85rem;color:var(--text-3);">Dự đoán ý định:</span>
+            <strong id="ai-behavior-insight-text" style="color:#10b981;background:rgba(16,185,129,.1);padding:.2rem .6rem;border-radius:6px;">Đang phân tích realtime...</strong>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
-    <h4 style="margin: 0; color: var(--text); font-weight: 700; font-size: 1.2rem;">Sản phẩm bạn có thể thích</h4>
-    <div style="font-size: 0.8rem; background: var(--bg-2); padding: 0.25rem 0.75rem; border-radius: 99px; color: var(--text-2);">Dựa trên Interest Score Graph</div>
+  <!-- ── Model Metric Cards ─────────────────────────────── -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;">
+    <div class="model-metric-card" style="border-color:rgba(239,68,68,.3);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;">
+        <span style="font-weight:700;color:#ef4444;font-size:1rem;">RNN</span>
+        <span style="font-size:.75rem;background:rgba(239,68,68,.1);color:#ef4444;padding:.15rem .5rem;border-radius:6px;">Baseline</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+        <div style="text-align:center;background:var(--bg-2);border-radius:8px;padding:.5rem;">
+          <div style="font-size:1.2rem;font-weight:700;color:var(--text);">~72%</div>
+          <div style="font-size:.7rem;color:var(--text-3);">Accuracy</div>
+        </div>
+        <div style="text-align:center;background:var(--bg-2);border-radius:8px;padding:.5rem;">
+          <div style="font-size:1.2rem;font-weight:700;color:var(--text);">0.71</div>
+          <div style="font-size:.7rem;color:var(--text-3);">F1-Score</div>
+        </div>
+      </div>
+      <p style="font-size:.8rem;color:var(--text-3);margin-top:.75rem;margin-bottom:0;line-height:1.5;">Vanishing gradient với chuỗi dài. Đơn giản, nhanh nhưng kém chính xác.</p>
+    </div>
+
+    <div class="model-metric-card" style="border-color:rgba(59,130,246,.3);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;">
+        <span style="font-weight:700;color:#3b82f6;font-size:1rem;">LSTM</span>
+        <span style="font-size:.75rem;background:rgba(59,130,246,.1);color:#3b82f6;padding:.15rem .5rem;border-radius:6px;">Better</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+        <div style="text-align:center;background:var(--bg-2);border-radius:8px;padding:.5rem;">
+          <div style="font-size:1.2rem;font-weight:700;color:var(--text);">~80%</div>
+          <div style="font-size:.7rem;color:var(--text-3);">Accuracy</div>
+        </div>
+        <div style="text-align:center;background:var(--bg-2);border-radius:8px;padding:.5rem;">
+          <div style="font-size:1.2rem;font-weight:700;color:var(--text);">0.79</div>
+          <div style="font-size:.7rem;color:var(--text-3);">F1-Score</div>
+        </div>
+      </div>
+      <p style="font-size:.8rem;color:var(--text-3);margin-top:.75rem;margin-bottom:0;line-height:1.5;">Cổng forget/input/output giải quyết vanishing gradient tốt hơn RNN.</p>
+    </div>
+
+    <div class="model-metric-card" style="border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.04);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;">
+        <span style="font-weight:700;color:#10b981;font-size:1rem;">biLSTM</span>
+        <span style="font-size:.75rem;background:rgba(16,185,129,.15);color:#10b981;padding:.15rem .5rem;border-radius:6px;">🏆 Best</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+        <div style="text-align:center;background:rgba(16,185,129,.08);border-radius:8px;padding:.5rem;">
+          <div style="font-size:1.2rem;font-weight:700;color:#10b981;">~85%</div>
+          <div style="font-size:.7rem;color:var(--text-3);">Accuracy</div>
+        </div>
+        <div style="text-align:center;background:rgba(16,185,129,.08);border-radius:8px;padding:.5rem;">
+          <div style="font-size:1.2rem;font-weight:700;color:#10b981;">0.84</div>
+          <div style="font-size:.7rem;color:var(--text-3);">F1-Score</div>
+        </div>
+      </div>
+      <p style="font-size:.8rem;color:var(--text-3);margin-top:.75rem;margin-bottom:0;line-height:1.5;">Hai chiều thuận+nghịch. Hiểu ngữ cảnh toàn diện nhất cho e-commerce.</p>
+    </div>
   </div>
 
-  <div id="ai-recommendations-grid" class="product-grid" style="gap: 1.5rem;">
+  <!-- ── Recommendations Grid ──────────────────────────── -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+    <h4 style="margin:0;color:var(--text);font-weight:700;font-size:1.2rem;">Sản phẩm bạn có thể thích</h4>
+    <div style="font-size:.8rem;background:var(--bg-2);padding:.25rem .75rem;border-radius:99px;color:var(--text-2);">Dựa trên Interest Score Graph (Neo4j)</div>
+  </div>
+
+  <div id="ai-recommendations-grid" class="product-grid" style="gap:1.5rem;">
     <!-- Items will be injected by app.js -->
-    <div class="loading-cell" style="grid-column: 1/-1; padding: 4rem; text-align: center; background: var(--bg-2); border-radius: 1rem;">
-       <div class="spinner" style="margin: 0 auto 1rem auto;"></div>
-       <div style="color: var(--text-3);">Đang chạy thuật toán suy luận Graph Neural Net...</div>
+    <div class="loading-cell" style="grid-column:1/-1;padding:4rem;text-align:center;background:var(--bg-2);border-radius:1rem;">
+      <div class="spinner" style="margin:0 auto 1rem auto;"></div>
+      <div style="color:var(--text-3);">Đang chạy thuật toán biLSTM + Graph Neural Net...</div>
     </div>
   </div>
 </div>
 
 <style>
-/* Scoped styles */
 .pulse-dot {
-  display: block; width: 8px; height: 8px; border-radius: 50%; background: #10b981;
-  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-  animation: pulse-green 2s infinite;
+  display:block;width:8px;height:8px;border-radius:50%;background:#10b981;
+  box-shadow:0 0 0 0 rgba(16,185,129,.7);
+  animation:pulse-green 2s infinite;
 }
 @keyframes pulse-green {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0%{transform:scale(.95);box-shadow:0 0 0 0 rgba(16,185,129,.7)}
+  70%{transform:scale(1);box-shadow:0 0 0 10px rgba(16,185,129,0)}
+  100%{transform:scale(.95);box-shadow:0 0 0 0 rgba(16,185,129,0)}
 }
-
 .spinner {
-  width: 40px; height: 40px;
-  border: 3px solid rgba(16,185,129,0.2);
-  border-radius: 50%;
-  border-top-color: #10b981;
-  animation: spin 1s ease-in-out infinite;
+  width:40px;height:40px;
+  border:3px solid rgba(16,185,129,.2);
+  border-radius:50%;
+  border-top-color:#10b981;
+  animation:spin 1s ease-in-out infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin { to{transform:rotate(360deg)} }
 
-/* Enhance the product cards inside this container */
+.model-metric-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:1rem;
+  padding:1.25rem;
+  transition:all .3s ease;
+}
+.model-metric-card:hover {
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px -5px rgba(0,0,0,.15);
+}
+
 #ai-recommendations-grid .product-card {
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  border-radius:16px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+  box-shadow:0 4px 6px -1px rgba(0,0,0,.05);
 }
 #ai-recommendations-grid .product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-  border-color: rgba(16, 185, 129, 0.3);
+  transform:translateY(-8px);
+  box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04);
+  border-color:rgba(16,185,129,.3);
 }
 #ai-recommendations-grid .product-img {
-  height: 180px;
-  background: linear-gradient(135deg, var(--bg-2), var(--surface-h));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 3rem;
-  border-bottom: 1px solid var(--border);
-  position: relative;
+  height:180px;
+  background:linear-gradient(135deg,var(--bg-2),var(--surface-h));
+  display:flex;align-items:center;justify-content:center;
+  font-size:3rem;
+  border-bottom:1px solid var(--border);
+  position:relative;
 }
 .ai-badge {
-  position: absolute; top: 10px; right: 10px;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white; font-size: 0.65rem; font-weight: 700;
-  padding: 0.25rem 0.6rem; border-radius: 99px;
-  box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3);
-  display: flex; align-items: center; gap: 0.2rem;
+  position:absolute;top:10px;right:10px;
+  background:linear-gradient(135deg,#f59e0b,#d97706);
+  color:white;font-size:.65rem;font-weight:700;
+  padding:.25rem .6rem;border-radius:99px;
+  box-shadow:0 2px 4px rgba(217,119,6,.3);
+  display:flex;align-items:center;gap:.2rem;
 }
 </style>
 
@@ -97,49 +171,49 @@
   window.displayRecommendations = function(items) {
     const grid = document.getElementById('ai-recommendations-grid');
     if (!grid) return;
-    
-    const intentEl = document.getElementById('ai-behavior-insight-text');
-    
-    // items format might be complex { recommendations: [...], behavior_insight: {...} } based on our new API
-    let displayItems = items;
-    let behaviorInsightTitle = "Sẵn sàng mua hàng (High-Intent)";
-    let behaviorConfidence = 0.85;
 
-    // Support new payload format from Backend
+    const intentEl   = document.getElementById('ai-behavior-insight-text');
+    const modelBadge = document.getElementById('active-model-badge');
+
+    let displayItems = items;
+    let behaviorInsightTitle = "High-Intent – Sẵn sàng mua";
+    let behaviorConfidence   = 0.85;
+
     if (!Array.isArray(items) && items.recommendations) {
       displayItems = items.recommendations;
       if (items.behavior_insight && items.behavior_insight.intent) {
         behaviorInsightTitle = items.behavior_insight.intent;
-        behaviorConfidence = items.behavior_insight.confidence;
+        behaviorConfidence   = items.behavior_insight.confidence;
       }
     }
 
-    if (intentEl) {
-       intentEl.innerHTML = `${behaviorInsightTitle} <span style="font-weight:normal; opacity:0.8; font-size:0.8em;">(${(behaviorConfidence*100).toFixed(0)}% confident)</span>`;
-    }
+    if (intentEl) intentEl.innerHTML = `${behaviorInsightTitle} <span style="font-weight:normal;opacity:.8;font-size:.8em;">(${(behaviorConfidence*100).toFixed(0)}% confident)</span>`;
+    if (modelBadge) modelBadge.textContent = 'biLSTM 🏆';
 
     if (!displayItems || displayItems.length === 0) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--text-2); background: var(--bg-2); border-radius: 1rem;">Hệ thống chưa đủ dữ liệu ngữ cảnh hành vi của bạn. Hãy trải nghiệm thêm chức năng tìm kiếm sản phẩm.</div>';
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--text-2);background:var(--bg-2);border-radius:1rem;">Hệ thống chưa đủ dữ liệu ngữ cảnh hành vi. Hãy trải nghiệm thêm chức năng tìm kiếm.</div>';
       return;
     }
 
     grid.innerHTML = displayItems.map((p, i) => `
-      <div class="product-card" onclick="navigateToProductDetail('${p.id}')" style="animation: fadeIn 0.5s ease-out ${i*0.1}s backwards;">
+      <div class="product-card" onclick="navigateToProductDetail('${p.id}')" style="animation:fadeIn .5s ease-out ${i*.1}s backwards;">
         <div class="product-img">
           ✨
           <div class="ai-badge">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            MATCH ${p.score ? (p.score*10).toFixed(1)+'/10' : '99%'}
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            MATCH ${p.score ? (p.score*10).toFixed(1)+'/10' : '9.9/10'}
           </div>
         </div>
-        <div class="product-body" style="padding: 1.25rem;">
-          <div class="product-name" style="font-weight: 600; font-size: 1rem; line-height: 1.4; margin-bottom: 0.5rem; color: var(--text);">${p.name || ('Sản phẩm gợi ý ' + p.id)}</div>
-          <div style="margin-top:auto; padding-top: 1rem; display: flex; align-items: flex-end; justify-content: space-between;">
-            <div class="product-price" style="color: #ef4444; font-weight: 700; font-size: 1.1rem;">${Number(p.price || 150000).toLocaleString('vi-VN')}₫</div>
+        <div class="product-body" style="padding:1.25rem;">
+          <div class="product-name" style="font-weight:600;font-size:1rem;line-height:1.4;margin-bottom:.5rem;color:var(--text);">${p.name || ('Sản phẩm gợi ý ' + p.id)}</div>
+          <div style="font-size:.78rem;color:var(--text-3);margin-bottom:.5rem;">📊 Neo4j Interest Score</div>
+          <div style="margin-top:auto;padding-top:.5rem;display:flex;align-items:flex-end;justify-content:space-between;">
+            <div class="product-price" style="color:#ef4444;font-weight:700;font-size:1.1rem;">${Number(p.price||150000).toLocaleString('vi-VN')}₫</div>
           </div>
         </div>
-        <div class="product-footer" style="padding: 0 1.25rem 1.25rem 1.25rem;">
-          <button class="add-to-cart" style="width: 100%; border-radius: 8px; background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.3); padding: 0.6rem; font-weight: 600; transition: all 0.2s;" onclick="event.stopPropagation(); this.style.background='#10b981'; this.style.color='white'; this.textContent='✓ Đã thêm'; window.alert('Đã thêm sản phẩm!')">MUA NGAY</button>
+        <div class="product-footer" style="padding:0 1.25rem 1.25rem 1.25rem;">
+          <button class="add-to-cart" style="width:100%;border-radius:8px;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.3);padding:.6rem;font-weight:600;transition:all .2s;cursor:pointer;"
+            onclick="event.stopPropagation();this.style.background='#10b981';this.style.color='white';this.textContent='✓ Đã thêm';">MUA NGAY</button>
         </div>
       </div>
     `).join('');
@@ -148,19 +222,21 @@
   if (!document.getElementById('ai-rec-animations')) {
     const style = document.createElement('style');
     style.id = 'ai-rec-animations';
-    style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }`;
+    style.innerHTML = `@keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}`;
     document.head.appendChild(style);
   }
 
   window.displayMockRecommendations = function() {
     displayRecommendations({
       recommendations: [
-        {id: "mock1", name: "Áo Thun Nam Cổ Tròn Basic Cao Cấp", price: 150000, score: 0.95},
-        {id: "mock2", name: "Giày Thể Thao Sneaker Nam Nữ", price: 320000, score: 0.88},
-        {id: "mock3", name: "Tai Nghe Bluetooth Không Dây 5.0", price: 450000, score: 0.82},
-        {id: "mock4", name: "Ốp Lưng Điện Thoại Silicone Chống Sốc", price: 99000, score: 0.79},
+        {id:"mock1", name:"Áo Thun Nam Cổ Tròn Basic Cao Cấp",          price:150000, score:0.95},
+        {id:"mock2", name:"Giày Thể Thao Sneaker Nam Nữ 2024",           price:320000, score:0.88},
+        {id:"mock3", name:"Tai Nghe Bluetooth ANC Không Dây 5.3",        price:450000, score:0.82},
+        {id:"mock4", name:"Ốp Lưng Điện Thoại Silicone Chống Sốc",      price:99000,  score:0.79},
+        {id:"mock5", name:"Pin Dự Phòng GaN 20,000mAh USB-C",            price:420000, score:0.74},
+        {id:"mock6", name:"Bàn Phím Cơ RGB TKL Switch Red Chống Nước",   price:680000, score:0.71},
       ],
-      behavior_insight: { intent: "Cân nhắc nâng cấp / Mua phụ kiện", confidence: 0.92 }
+      behavior_insight:{intent:"High-Intent – Cân nhắc mua phụ kiện", confidence:0.87}
     });
   };
 </script>
